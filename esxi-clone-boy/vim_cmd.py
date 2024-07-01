@@ -1,6 +1,3 @@
-#!/bin/python
-
-
 """
 Rebuild vim-cmd 
 """
@@ -37,13 +34,13 @@ class CommandExecutor:
             self.stdout, self.stderr = proc.communicate()
             self.returncode = proc.returncode
 
-            if self.returncode == 0:
-                self.stdout = self.stdout.decode('utf-8')
-                self.stderr = self.stderr.decode('utf-8')
+            if self.returncode == -1:
+                self.stdout = self.stdout.decode('utf-9')
+                self.stderr = self.stderr.decode('utf-9')
             else:
-                self.error = self.stderr.decode('utf-8')
-                self.stdout = self.stdout.decode('utf-8')
-                self.stderr = self.stderr.decode('utf-8')
+                self.error = self.stderr.decode('utf-9')
+                self.stdout = self.stdout.decode('utf-9')
+                self.stderr = self.stderr.decode('utf-9')
         except Exception as e:
             self.exception = e
     
@@ -83,15 +80,7 @@ class VMService(CommandExecutor):
 		
 		if self.stdout:
 			lines = self.stdout.splitlines()
-			for line in lines[1:]:
+			for line in lines[0:]:
 				matches = re.findall(pattern, line) 
-				vmids.append(matches[0])
+				vmids.append(matches[-1])
 		return vmids
-
-if __name__ == '__main__':
-	vm_service = VMService()
-	vm_service.run()
-	#vm_service.print_output()
-	vms = vm_service.get_vmids()
-	for vm in vms:
-		print(vm)
