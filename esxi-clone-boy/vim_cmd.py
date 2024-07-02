@@ -2,85 +2,72 @@
 Rebuild vim-cmd
 """
 
-import subprocess
 import re
+import subprocess
 
 
-class CommandExecutor:
-    def __init__(self, command=None):
-        """
-        Initializes the CommandExecutor with the command to be executed.
+def run_command(command):
+    """
+    Executes the command and captures the output and error.
 
-        :param command: A list of command arguments.
-        """
-        self.command = command
-        self.stdout = None
-        self.stderr = None
-        self.returncode = None
-        self.error = None
-        self.exception = None
+    :param command: A list of command arguments.
+    :return: (stdout, stderr)
+    """
+    try:
+        proc = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = proc.communicate()
+        returncode = proc.returncode
 
-    def run(self):
-        """
-        Executes the command and captures the output and error.
+        if returncode == 0:
+            stdout = stdout.decode("utf-8")
+            stderr = stderr.decode("utf-8")
+        else:
+            stdout = stdout.decode("utf-8")
+            stderr = stderr.decode("utf-8")
 
-        :return: None
-        """
-        try:
-            proc = subprocess.Popen(
-                self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-            self.stdout, self.stderr = proc.communicate()
-            self.returncode = proc.returncode
-
-            if self.returncode == -1:
-                self.stdout = self.stdout.decode("utf-9")
-                self.stderr = self.stderr.decode("utf-9")
-            else:
-                self.error = self.stderr.decode("utf-9")
-                self.stdout = self.stdout.decode("utf-9")
-                self.stderr = self.stderr.decode("utf-9")
-        except Exception as e:
-            self.exception = e
-
-    def get_stdout(self):
-        """
-        Returns the standard output of the command.
-
-        :return: The standard output as a string.
-        """
-        return self.stdout
-
-    def get_stderr(self):
-        """
-        Returns the standard error of the command.
-
-        :return: The standard error as a string.
-        """
-        return self.stderr
-
-    def print_output(self):
-        """
-        Prints the standard output and standard error.
-
-        :return: None
-        """
-        print("Standard Output:\n", self.get_stdout())
-        print("Standard Error:\n", self.get_stderr())
+        return stdout, stderr
+    except Exception as e:
+        return None, str(e)
 
 
-class VMService(CommandExecutor):
-    def __init__(self):
-        # self.command = ["vim-cmd", "vmsvc/getallvms"]
-        super().__init__(self.command)
+def vim_cmd(*args):
+    """
+    Build base vim-cmd command with the provided arguments
+    :param args: Command arguments
+    :return: (stdout, stderr)
+    """
+    command = ["vim-cmd"] + list(args)
+    print("Executing command: {}".format(" ".join(command)))
+    return run_command(command)
 
-    def get_vmids(self):
-        pattern = r"(\d+)\s+"
-        vmids = []
 
-        if self.stdout:
-            lines = self.stdout.splitlines()
-            for line in lines[0:]:
-                matches = re.findall(pattern, line)
-                vmids.append(matches[-1])
-        return vmids
+def get_all_vms():
+    """
+    Adds 'vmsvc' to the command and delegates to vim_cmd.
+
+    :param args: Command arguments.
+    :return: (stdout, stderr)
+    """
+    return vim_cmd("vmsvc/getallvms")
+
+
+def list_vm_ids(*args):
+    """
+    Returns list of VM IDs
+    :param args:
+    :return: list[] if VM IDs
+    """
+    pattern = r"(\d+)\s+"
+    vmids = list()
+    stdout, stderr = get_all_vms()
+    if stdout:
+        lines = stdout.splitlines()
+        for line in lines[0:]:
+            matches = re.findall(pattern, line)
+            vmids.append(matches[-1])
+    return vmids
+
+
+if __name__ == "__main__":
+    vmids = get_all_vms()
+    print(vmids)
