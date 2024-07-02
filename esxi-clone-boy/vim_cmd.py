@@ -41,7 +41,7 @@ def vim_cmd(*args):
     return run_command(command)
 
 
-def get_all_vms():
+def run_getallvms():
     """
     Adds 'vmsvc' to the command and delegates to vim_cmd.
 
@@ -59,16 +59,14 @@ def list_vm_ids(*args):
     """
     pattern = r"(\d+)\s+"
     vmids = list()
-    stdout, stderr = get_all_vms()
+    stdout, stderr = run_getallvms()
     if stdout:
         lines = stdout.splitlines()
-        for line in lines[0:]:
+        for line in lines[1:]:
             matches = re.findall(pattern, line)
-            vmids.append(matches[-1])
+            vmids.append(matches[0])
     return vmids
 
 
 if __name__ == "__main__":
-    vmids = get_all_vms()
-    print(vmids)
-    list_vm_ids()
+    print(list_vm_ids())
