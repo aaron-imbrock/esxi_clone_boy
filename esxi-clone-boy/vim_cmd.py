@@ -71,3 +71,4 @@ def list_vm_ids(*args):
 if __name__ == "__main__":
     vmids = get_all_vms()
     print(vmids)
+    list_vm_ids()
