@@ -3,18 +3,20 @@
 vim-cmd vmsvc/getallvms
 ```
 ### Confirm original VM is shutdown before clone
-### This command will also list running state. We want the VMID
-### VMID is an int
+This command will also list running state
+
 ```
-vim-cmd vmsvc/getallvms
+vim-cmd vmsvc/power.getstate <VM-ID>
 ```
+
 ### This command will shut down a VM
 
 Power off command:
 ```
-vim-cmd vmsvc/power.shutdown $VMID
+vim-cmd vmsvc/power.shutdown <VM-ID>
 ```
-### Get the location of hte configuration file for to be cloned VM 
+### Get the location of hte configuration file for to be cloned VM
+
 Additionally, get the location of the virtual disks(s).
 ```
 cat /etc/vmware/hostd/vmInventory.xml |grep -i Windows-VM | grep vmx
