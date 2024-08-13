@@ -10,7 +10,7 @@ vim-cmd vmsvc/getallvms
 ```
 ### This command will shut down a VM
 
-Power off command: `vim-cmd vmsvc/power.off $VMID`
+Power off command:
 ```
 vim-cmd vmsvc/power.shutdown $VMID
 ```
