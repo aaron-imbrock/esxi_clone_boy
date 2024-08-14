@@ -1,5 +1,6 @@
 import xml.etree.ElementTree as ET
 
+
 # Define the class for ConfigEntry
 class ConfigEntry:
     def __init__(self, id, obj_id, sec_domain, vmx_cfg_path):
@@ -9,7 +10,10 @@ class ConfigEntry:
         self.vmx_cfg_path = vmx_cfg_path
 
     def __repr__(self):
-        return f"ConfigEntry(id={self.id}, obj_id={self.obj_id}, sec_domain={self.sec_domain}, vmx_cfg_path={self.vmx_cfg_path})"
+        return "ConfigEntry(id={}, obj_id={}, sec_domain={}, vmx_cfg_path={})".format(
+            self.id, self.obj_id, self.sec_domain, self.vmx_cfg_path
+        )
+
 
 # XML data string
 xml_data = """
@@ -32,24 +36,35 @@ xml_data = """
 </Root>
 """
 
-# Parse the XML data
-root = ET.fromstring(xml_data)
 
-# List to hold ConfigEntry objects
-config_entries = []
-
-# Iterate over ConfigEntry elements in the XML
-for entry in root.findall('ConfigEntry'):
-    id = entry.get('id')
-    obj_id = entry.find('objID').text
-    sec_domain = entry.find('secDomain').text if entry.find('secDomain').text else None
-    vmx_cfg_path = entry.find('vmxCfgPath').text
+def get_vmxCfgPath(objID, xml_data):
     
-    # Create a ConfigEntry object and add it to the list
-    config_entry = ConfigEntry(id, obj_id, sec_domain, vmx_cfg_path)
-    config_entries.append(config_entry)
+    objID = str(objID)
+    # Parse the XML data returned from `vim-cmd vmsvc/getallvms`
+    root = ET.fromstring(xml_data)
 
-# Output the list of ConfigEntry objects
-for entry in config_entries:
-    if entry.obj_id == '12':
-        print(entry.vmx_cfg_path)
+    # List to hold ConfigEntry objects
+    config_entries = []
+
+    # Iterate over ConfigEntry elements in the XML
+    for entry in root.findall("ConfigEntry"):
+        id = entry.get("id")
+        obj_id = entry.find("objID").text
+        sec_domain = (
+            entry.find("secDomain").text if entry.find("secDomain").text else None
+        )
+        vmx_cfg_path = entry.find("vmxCfgPath").text
+
+        # Create a ConfigEntry object and add it to the list
+        config_entry = ConfigEntry(id, obj_id, sec_domain, vmx_cfg_path)
+        config_entries.append(config_entry)
+
+    for entry in config_entries:
+        if entry.obj_id == objID:
+            return entry.vmx_cfg_path
+    return None
+
+
+if __name__ == "__main__":
+    vmx_cfg_path = get_vmxCfgPath(12, xml_data)
+    print(vmx_cfg_path)
