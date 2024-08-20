@@ -3,11 +3,13 @@ import xml.etree.ElementTree as ET
 
 # Define the class for ConfigEntry
 class ConfigEntry:
-    def __init__(self, id, obj_id, sec_domain, vmx_cfg_path):
+    def __init__(self, id, obj_id, sec_domain, vmx_cfg_path, datastore=None):
         self.id = id
         self.obj_id = obj_id
         self.sec_domain = sec_domain
         self.vmx_cfg_path = vmx_cfg_path
+        self.datastore = datastore
+        
 
     def __repr__(self):
         return "ConfigEntry(id={}, obj_id={}, sec_domain={}, vmx_cfg_path={})".format(

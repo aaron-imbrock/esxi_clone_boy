@@ -1,3 +1,10 @@
+# Manual process for cloning a VM
+
+
+Note: There's two base commands that I know of that each does much the same thing. They're `vim-cmd` and `esxcli`.
+Stick to using `esxcli` as much as possible until you understand more about ESXI.
+
+
 ### Check the list of VMs registered on this ESXi host (we are going to clone the same Windows-VM, that is, the original VM in the previous example).
 `
 vim-cmd vmsvc/getallvms
